@@ -27,6 +27,7 @@ public class Department extends OrganizationalUnit {
             inverseJoinColumns = @JoinColumn(name = "lector_id")
     )
     private Set<Lector> employees = new HashSet<>();
+
     @ManyToOne
     @JoinColumn(name = "head_of_department_id")
     private Lector headOfDepartment;
