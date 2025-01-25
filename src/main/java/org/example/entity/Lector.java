@@ -15,9 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Lector extends UniversityMember {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Boolean isHeadOfDepartment;
     @ManyToMany(mappedBy = "employees")
     private Set<Department> department;
 }

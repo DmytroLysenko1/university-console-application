@@ -16,10 +16,6 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Department extends OrganizationalUnit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @ManyToMany
     @JoinTable(
             name = "department_lector",
