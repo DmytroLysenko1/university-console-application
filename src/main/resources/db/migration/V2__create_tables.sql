@@ -1,8 +1,3 @@
-CREATE TABLE IF NOT EXISTS organizational_units (
-    id BIGSERIAL PRIMARY KEY,
-    department_name VARCHAR(255) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS lectors (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,

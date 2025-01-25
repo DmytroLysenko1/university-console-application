@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @ToString
 @EqualsAndHashCode
 public abstract class UniversityMember {
-    private Long id;
     private String name;
     @Enumerated(EnumType.STRING)
     private Degree degree;

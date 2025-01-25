@@ -1,4 +1,3 @@
--- Вставляем лекторов
 INSERT INTO lectors (id, name, degree, salary, is_head_of_department) VALUES
     (1,'Alice Johnson', 'Professor', 70000.00, TRUE),
     (2,'Bob Smith', 'Associate Professor', 60000.00, FALSE),

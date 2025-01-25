@@ -9,6 +9,5 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 public abstract class OrganizationalUnit {
-    private Long id;
     private String departmentName;
 }
