@@ -5,6 +5,7 @@ import org.example.dto.depatrment.DepartmentRequestDTO;
 import org.example.entity.Department;
 import org.example.entity.Lector;
 import org.example.enums.Degree;
+import org.example.exceptionHandling.customExceptions.NotFoundException;
 import org.example.repositrory.DepartmentRepository;
 import org.example.repositrory.LectorRepository;
 import org.example.service.DepartmentService;
@@ -55,12 +56,16 @@ public class DepartmentServiceImpl implements DepartmentService {
         return this.departmentRepository
                 .findByName(departmentName)
                 .map(department -> department.getHeadOfDepartment().getName())
-                .orElse("Head of department not found");
+                .orElseThrow(
+                        () -> new NotFoundException("Head of department not found", departmentName)
+                );
     }
 
     @Override
     public Integer fetchEmployeeCount(String departmentName) {
-        Department department = this.departmentRepository.findByName(departmentName).orElseThrow();
+        Department department = this.departmentRepository.findByName(departmentName).orElseThrow(
+                () -> new NotFoundException("Department not found", departmentName)
+        );
         return department.getEmployees().size();
     }
 
@@ -70,7 +75,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     private List<Lector> fetchLectorsByDegreeAndDepartment(String departmentName, Degree degree) {
-        Department department = this.departmentRepository.findByName(departmentName).orElseThrow();
+        Department department = this.departmentRepository.findByName(departmentName).orElseThrow(
+                () -> new NotFoundException("Department not found", departmentName)
+        );
         return department
                 .getEmployees()
                 .stream()

@@ -17,7 +17,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 public class Lector extends UniversityMember {
     private Boolean isHeadOfDepartment;
-    @ManyToMany(mappedBy = "employees")
+    @ManyToMany(mappedBy = "employees", fetch = FetchType.EAGER)
     private Set<Department> department = new HashSet<>();
 }
 

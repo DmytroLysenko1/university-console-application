@@ -16,7 +16,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Department extends OrganizationalUnit {
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "department_lector",
             joinColumns = @JoinColumn(name = "department_id"),
@@ -24,7 +24,7 @@ public class Department extends OrganizationalUnit {
     )
     private Set<Lector> employees = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "head_of_department_id")
     private Lector headOfDepartment;
 }
