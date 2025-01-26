@@ -3,13 +3,16 @@ package org.example.aspect;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+
+import org.example.annotations.Loggable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import static org.slf4j.MDC.clear;
-import static org.slf4j.MDC.put;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
+import static org.slf4j.MDC.*;
 
 @Aspect
 @Component
@@ -17,76 +20,70 @@ public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
     private static final String REQUEST_ID = "requestId";
 
-    @Before("execution(* org.example.service.impl.*ServiceImpl.*(..))")
-    public void logBefore(JoinPoint joinPoint) {
-        put(REQUEST_ID, generateRequestId());
-        logger.info("Entering method: {} with arguments: {}",
-                joinPoint.getSignature().getName(),
-                logArguments(joinPoint.getArgs()));
+    @Before("@annotation(loggable)")
+    public void logBefore(JoinPoint joinPoint, Loggable loggable) {
+        String requestId = generateRequestId();
+        put(REQUEST_ID, requestId);
+        if (loggable.logArguments()) {
+            logger.info("Entering method: {} with arguments: {}, Request ID: {}",
+                    joinPoint.getSignature().getName(),
+                    logArguments(joinPoint.getArgs()),
+                    requestId);
+        } else {
+            logger.info("Entering method: {}, Request ID: {}",
+                    joinPoint.getSignature().getName(),
+                    requestId);
+        }
     }
 
-    @After("execution(* org.example.service.impl.*ServiceImpl.*(..))")
+    @After("@annotation(org.example.annotations.Loggable)")
     public void logAfter(JoinPoint joinPoint) {
-        logger.debug("Exiting method: {}", joinPoint.getSignature().getName());
+        String requestId = get(REQUEST_ID);
+        logger.debug("Exiting method: {} with Request ID: {}", joinPoint.getSignature().getName(), requestId);
         clear();
     }
 
-    @AfterThrowing(value = "execution(* org.example.service.impl.*ServiceImpl.*(..))", throwing = "ex")
-    public void logAfterThrowing(JoinPoint joinPoint, Throwable ex) {
-        if (ex instanceof IllegalArgumentException) {
-            logger.warn("Warning in method: {} with cause: {}",
-                    joinPoint.getSignature().getName(),
-                    ex.getMessage());
-        } else {
-            logger.error("Critical error in method: {} with cause: {}",
+    @AfterThrowing(value = "@annotation(loggable)", throwing = "ex")
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable ex, Loggable loggable) {
+        String requestId = get(REQUEST_ID);
+        if (loggable.logException()) {
+            logger.error("Exception in method: {} with cause: {}. Request ID: {}",
                     joinPoint.getSignature().getName(),
                     ex.getMessage(),
-                    ex);
+                    requestId, ex);
         }
     }
 
-    @Around("execution(* org.example.service.impl.*ServiceImpl.*(..))")
-    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(loggable)")
+    public Object logAround(ProceedingJoinPoint joinPoint, Loggable loggable) throws Throwable {
+        String requestId = get(REQUEST_ID);
         long startTime = System.currentTimeMillis();
         try {
             Object result = joinPoint.proceed();
             long timeTaken = System.currentTimeMillis() - startTime;
-            logger.info("Method: {} executed in {} ms with result: {}",
-                    joinPoint.getSignature().getName(),
-                    timeTaken,
-                    logResult(result));
+            if (loggable.logReturnValue()) {
+                logger.info("Method: {} executed in {} ms with result: {}. Request ID: {}",
+                        joinPoint.getSignature().getName(),
+                        timeTaken,
+                        logResult(result),
+                        requestId);
+            } else {
+                logger.info("Method: {} executed in {} ms. Request ID: {}",
+                        joinPoint.getSignature().getName(),
+                        timeTaken,
+                        requestId);
+            }
             return result;
         } catch (Throwable ex) {
             long timeTaken = System.currentTimeMillis() - startTime;
-            logger.error("Method: {} executed in {} ms with exception: {}",
+            logger.error("Method: {} executed in {} ms with exception: {}. Request ID: {}",
                     joinPoint.getSignature().getName(),
                     timeTaken,
                     ex.getMessage(),
-                    ex);
+                    requestId, ex);
             throw ex;
         } finally {
             clear();
-        }
-    }
-
-    @Around("execution(* org.example.repositrory.*Repository.*(..))")
-    public Object logRepositoryCalls(ProceedingJoinPoint joinPoint) throws Throwable {
-        long startTime = System.currentTimeMillis();
-        try {
-            Object result = joinPoint.proceed();
-            long timeTaken = System.currentTimeMillis() - startTime;
-            logger.debug("Database query executed: {} in {} ms",
-                    joinPoint.getSignature().getName(),
-                    timeTaken);
-            return result;
-        } catch (Throwable ex) {
-            long timeTaken = System.currentTimeMillis() - startTime;
-            logger.error("Database query failed: {} executed in {} ms with exception: {}",
-                    joinPoint.getSignature().getName(),
-                    timeTaken,
-                    ex.getMessage(),
-                    ex);
-            throw ex;
         }
     }
 
@@ -95,10 +92,17 @@ public class LoggingAspect {
     }
 
     private String logArguments(Object[] args) {
-        return args != null ? String.join(", ", (CharSequence[]) args) : "No arguments";
+        return args != null ? Arrays.stream(args)
+                .map(Object::toString)
+                .limit(5)
+                .collect(Collectors.joining(", ")) : "No arguments";
     }
 
     private String logResult(Object result) {
-        return result != null ? result.toString() : "No result";
+        if (result != null) {
+            String resultStr = result.toString();
+            return resultStr.length() > 200 ? resultStr.substring(0, 200) + "..." : resultStr;
+        }
+        return "No result";
     }
 }
