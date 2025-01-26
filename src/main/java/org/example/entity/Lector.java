@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.entity.abstracts.UniversityMember;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,6 +18,6 @@ import java.util.Set;
 public class Lector extends UniversityMember {
     private Boolean isHeadOfDepartment;
     @ManyToMany(mappedBy = "employees")
-    private Set<Department> department;
+    private Set<Department> department = new HashSet<>();
 }
 
