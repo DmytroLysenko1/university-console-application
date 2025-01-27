@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 public abstract class OrganizationalUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

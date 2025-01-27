@@ -52,6 +52,7 @@ public class LoggingAspect {
                     ex.getMessage(),
                     requestId, ex);
         }
+        clear();
     }
 
     @Around("@annotation(loggable)")
@@ -87,18 +88,18 @@ public class LoggingAspect {
         }
     }
 
-    private String generateRequestId() {
+    String generateRequestId() {
         return "REQ-" + System.currentTimeMillis();
     }
 
-    private String logArguments(Object[] args) {
+    String logArguments(Object[] args) {
         return args != null ? Arrays.stream(args)
                 .map(Object::toString)
                 .limit(5)
                 .collect(Collectors.joining(", ")) : "No arguments";
     }
 
-    private String logResult(Object result) {
+    String logResult(Object result) {
         if (result != null) {
             String resultStr = result.toString();
             return resultStr.length() > 200 ? resultStr.substring(0, 200) + "..." : resultStr;

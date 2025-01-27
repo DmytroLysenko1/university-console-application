@@ -37,7 +37,8 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public Optional<DepartmentRequestDTO> findByName(String departmentName) {
-        return this.departmentRepository.findByDepartmentName(departmentName).map(department ->
+        return this.departmentRepository.findByDepartmentName(departmentName)
+                .map(department ->
                 this.modelMapper.map(department, DepartmentRequestDTO.class)
         );
     }
@@ -81,7 +82,10 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public Integer fetchAssociateProfessorsCount(String departmentName) {
-        return countLectorsByDegreeAndDepartment(departmentName, Degree.ASSOCIATE_PROFESSOR);
+        return countLectorsByDegreeAndDepartment(
+                departmentName,
+                Degree.ASSOCIATE_PROFESSOR
+        );
     }
 
     @Override
@@ -95,7 +99,10 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public Integer fetchProfessorsCount(String departmentName) {
-       return countLectorsByDegreeAndDepartment(departmentName, Degree.PROFESSOR);
+       return countLectorsByDegreeAndDepartment(
+               departmentName,
+               Degree.PROFESSOR
+       );
     }
 
     @Override
@@ -114,7 +121,10 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .map(Department::getHeadOfDepartment)
                 .map(Lector::getName)
                 .orElseThrow(
-                        () -> new NotFoundException("Head of department not found", departmentName)
+                        () -> new NotFoundException(
+                                "Head of department not found",
+                                departmentName
+                        )
                 );
     }
 
@@ -129,10 +139,16 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public Integer fetchEmployeeCount(String departmentName) {
-        Department department = this.departmentRepository.findByDepartmentName(departmentName).orElseThrow(
-                () -> new NotFoundException("Department not found", departmentName)
+        Department department = this.departmentRepository.findByDepartmentName(departmentName)
+                .orElseThrow(
+                        () -> new NotFoundException(
+                                "Department not found",
+                                departmentName
+                        )
         );
-        return department.getEmployees().size();
+        return department
+                .getEmployees()
+                .size();
     }
 
     @Override
@@ -146,7 +162,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public List<Lector> searchLecturersByNameContaining(String name) {
-        return lectorRepository.findByNameContaining(name);
+        return this.lectorRepository.findByNameContaining(name);
     }
 
     @Loggable(
@@ -156,13 +172,20 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     private List<Lector> fetchLectorsByDegreeAndDepartment(String departmentName, Degree degree) {
-        Department department = this.departmentRepository.findByDepartmentName(departmentName).orElseThrow(
-                () -> new NotFoundException("Department not found", departmentName)
+        Department department = this.departmentRepository.findByDepartmentName(departmentName)
+                .orElseThrow(
+                        () -> new NotFoundException(
+                                "Department not found",
+                                departmentName
+                        )
         );
         return department
                 .getEmployees()
                 .stream()
-                .filter(lector -> lector.getDegree().equals(degree))
+                .filter(lector -> lector
+                        .getDegree()
+                        .equals(degree)
+                )
                 .toList();
     }
 
@@ -173,6 +196,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     private Integer countLectorsByDegreeAndDepartment(String departmentName, Degree degree) {
-        return fetchLectorsByDegreeAndDepartment(departmentName, degree).size();
+        return fetchLectorsByDegreeAndDepartment(
+                departmentName,
+                degree
+        ).size();
     }
 }
