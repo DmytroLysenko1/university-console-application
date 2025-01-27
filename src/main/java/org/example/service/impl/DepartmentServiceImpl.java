@@ -198,7 +198,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     /**
      * Searches for lecturers by name containing the specified string and degree.
      *
-     * @param name the string to search for in the lecturer names
+     * @param departmentName the string to search for in the lecturer names
      * @param degree the degree to search for
      * @return a list of lecturers whose names contain the specified string and have the specified degree
      */
