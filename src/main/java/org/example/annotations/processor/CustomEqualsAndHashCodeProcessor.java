@@ -13,10 +13,26 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
+
+/**
+ * Annotation processor for generating custom `equals` and `hashCode` methods for JPA entities.
+ * This processor is an alternative to the `@EqualsAndHashCode` annotation from Lombok, which is not recommended for JPA entities.
+ * <p>
+ * The generated `equals` method checks for equality based on the entity's ID, considering Hibernate proxies.
+ * The generated `hashCode` method returns the hash code of the entity's class, considering Hibernate proxies.
+ */
 @SupportedAnnotationTypes("org.example.annotation.CustomEqualsAndHashCode")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class CustomEqualsAndHashCodeProcessor extends AbstractProcessor {
 
+
+    /**
+     * Processes the annotations and generates the `equals` and `hashCode` methods for the annotated elements.
+     *
+     * @param annotations the set of annotations to be processed
+     * @param roundEnv the environment for information about the current and prior round
+     * @return true if the annotations are claimed by this processor, false otherwise
+     */
     @Override
     @Loggable(logArguments = true, logReturnValue = true)
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -28,6 +44,11 @@ public class CustomEqualsAndHashCodeProcessor extends AbstractProcessor {
         return true;
     }
 
+    /**
+     * Generates the `equals` and `hashCode` methods for the given type element.
+     *
+     * @param typeElement the type element for which to generate the methods
+     */
     @Loggable(logArguments = true, logReturnValue = true)
     private void generateEqualsAndHashCode(TypeElement typeElement) {
         String className = typeElement.getSimpleName().toString();
@@ -54,7 +75,7 @@ public class CustomEqualsAndHashCodeProcessor extends AbstractProcessor {
                 }
                 """;
 
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, equalsMethod);
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, hashCodeMethod);
+        this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, equalsMethod);
+        this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, hashCodeMethod);
     }
 }

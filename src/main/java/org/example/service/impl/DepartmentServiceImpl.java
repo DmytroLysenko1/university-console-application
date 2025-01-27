@@ -19,6 +19,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementation of the DepartmentService interface.
+ * Provides methods for interacting with department data, including fetching department details,
+ * calculating statistics, and performing searches.
+ */
 @Service
 @RequiredArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
@@ -26,11 +31,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final LectorRepository lectorRepository;
     private final ModelMapper modelMapper;
 
+    /**
+     * Finds a department by its name and returns a DepartmentRequestDTO.
+     *
+     * @param departmentName the name of the department
+     * @return an Optional containing the DepartmentRequestDTO if found, otherwise empty
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -43,11 +51,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         );
     }
 
+    /**
+     * Fetches the average salary for a department.
+     *
+     * @param departmentName the name of the department
+     * @return the average salary as a BigDecimal
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -57,11 +68,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         return this.lectorRepository.fetchAverageSalaryByDepartmentName(departmentName);
     }
 
+    /**
+     * Fetches the count of assistants in a department.
+     *
+     * @param departmentName the name of the department
+     * @return the count of assistants
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -71,11 +85,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         return countLectorsByDegreeAndDepartment(departmentName, Degree.ASSISTANT);
     }
 
+    /**
+     * Fetches the count of associate professors in a department.
+     *
+     * @param departmentName the name of the department
+     * @return the count of associate professors
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -88,11 +105,14 @@ public class DepartmentServiceImpl implements DepartmentService {
         );
     }
 
+    /**
+     * Fetches the count of professors in a department.
+     *
+     * @param departmentName the name of the department
+     * @return the count of professors
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -105,11 +125,15 @@ public class DepartmentServiceImpl implements DepartmentService {
        );
     }
 
+    /**
+     * Fetches the head of a department by its name.
+     *
+     * @param departmentName the name of the department
+     * @return the name of the head of the department
+     * @throws NotFoundException if the department or head of department is not found
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -128,11 +152,14 @@ public class DepartmentServiceImpl implements DepartmentService {
                 );
     }
 
+    /**
+     * Fetches the count of employees in a department.
+     *
+     * @param departmentName the name of the department
+     * @return the count of employees
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -151,11 +178,14 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .size();
     }
 
+    /**
+     * Searches for lecturers by name containing the specified string.
+     *
+     * @param name the string to search for in the lecturer names
+     * @return a list of lecturers whose names contain the specified string
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,
@@ -165,6 +195,13 @@ public class DepartmentServiceImpl implements DepartmentService {
         return this.lectorRepository.findByNameContaining(name);
     }
 
+    /**
+     * Searches for lecturers by name containing the specified string and degree.
+     *
+     * @param name the string to search for in the lecturer names
+     * @param degree the degree to search for
+     * @return a list of lecturers whose names contain the specified string and have the specified degree
+     */
     @Loggable(
             level = "DEBUG",
             logArguments = true,
@@ -189,6 +226,13 @@ public class DepartmentServiceImpl implements DepartmentService {
                 .toList();
     }
 
+    /**
+     * Counts the number of lecturers with the specified degree in the specified department.
+     *
+     * @param departmentName the name of the department
+     * @param degree the degree to search for
+     * @return the count of lecturers with the specified degree
+     */
     @Loggable(
             level = "DEBUG",
             logArguments = true,

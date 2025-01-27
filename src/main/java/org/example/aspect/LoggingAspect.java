@@ -20,6 +20,12 @@ public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
     private static final String REQUEST_ID = "requestId";
 
+    /**
+     * Logs method entry with arguments if specified.
+     *
+     * @param joinPoint the join point representing the method call
+     * @param loggable the loggable annotation instance
+     */
     @Before("@annotation(loggable)")
     public void logBefore(JoinPoint joinPoint, Loggable loggable) {
         String requestId = generateRequestId();
@@ -36,6 +42,11 @@ public class LoggingAspect {
         }
     }
 
+    /**
+     * Logs method exit.
+     *
+     * @param joinPoint the join point representing the method call
+     */
     @After("@annotation(org.example.annotations.Loggable)")
     public void logAfter(JoinPoint joinPoint) {
         String requestId = get(REQUEST_ID);
@@ -43,6 +54,13 @@ public class LoggingAspect {
         clear();
     }
 
+    /**
+     * Logs exceptions thrown by the method.
+     *
+     * @param joinPoint the join point representing the method call
+     * @param ex the exception thrown
+     * @param loggable the loggable annotation instance
+     */
     @AfterThrowing(value = "@annotation(loggable)", throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable ex, Loggable loggable) {
         String requestId = get(REQUEST_ID);
@@ -55,6 +73,14 @@ public class LoggingAspect {
         clear();
     }
 
+    /**
+     * Logs method execution time and return value if specified.
+     *
+     * @param joinPoint the join point representing the method call
+     * @param loggable the loggable annotation instance
+     * @return the result of the method call
+     * @throws Throwable if the method call throws an exception
+     */
     @Around("@annotation(loggable)")
     public Object logAround(ProceedingJoinPoint joinPoint, Loggable loggable) throws Throwable {
         String requestId = get(REQUEST_ID);
@@ -88,10 +114,21 @@ public class LoggingAspect {
         }
     }
 
+    /**
+     * Generates a unique request ID.
+     *
+     * @return the generated request ID
+     */
     String generateRequestId() {
         return "REQ-" + System.currentTimeMillis();
     }
 
+    /**
+     * Logs method arguments.
+     *
+     * @param args the method arguments
+     * @return a string representation of the arguments
+     */
     String logArguments(Object[] args) {
         return args != null ? Arrays.stream(args)
                 .map(Object::toString)
@@ -99,6 +136,12 @@ public class LoggingAspect {
                 .collect(Collectors.joining(", ")) : "No arguments";
     }
 
+    /**
+     * Logs method result.
+     *
+     * @param result the method result
+     * @return a string representation of the result
+     */
     String logResult(Object result) {
         if (result != null) {
             String resultStr = result.toString();

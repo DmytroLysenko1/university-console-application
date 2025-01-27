@@ -11,16 +11,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Implementation of the LectorService interface.
+ * Provides methods for interacting with lector data, including searching by name.
+ */
 @Service
 @RequiredArgsConstructor
 public class LectorServiceImpl implements LectorService {
     private final LectorRepository lectorRepository;
 
+    /**
+     * Searches for lectors by name containing the specified string.
+     *
+     * @param name the string to search for in lector names
+     * @return a list of lector names containing the specified string
+     */
     @Override
-    @Transactional(
-            readOnly = true,
-            isolation = Isolation.READ_COMMITTED
-    )
+    @Transactional(readOnly = true, isolation = Isolation.READ_COMMITTED)
     @Loggable(
             logArguments = true,
             logReturnValue = true,

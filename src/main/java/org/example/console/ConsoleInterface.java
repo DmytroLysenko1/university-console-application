@@ -10,12 +10,22 @@ import org.springframework.stereotype.Component;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+
+/**
+ * ConsoleInterface is a command-line interface for interacting with university data.
+ * It allows users to perform various operations such as fetching the head of a department,
+ * displaying department statistics, calculating average salaries, counting employees,
+ * and performing global searches.
+ */
 @Component
 @RequiredArgsConstructor
 public class ConsoleInterface implements CommandLineRunner {
     private final DepartmentService departmentService;
     private final LectorService lectorService;
 
+    /**
+     * Initializes the ConsoleInterface bean and prints the initialized services.
+     */
     @PostConstruct
     public void init() {
         System.out.printf(
@@ -25,6 +35,11 @@ public class ConsoleInterface implements CommandLineRunner {
         );
     }
 
+    /**
+     * Runs the console interface, prompting the user for commands until 'exit' is entered.
+     *
+     * @param args command-line arguments
+     */
     @Override
     public void run(String... args) {
         Scanner scanner = new Scanner(System.in);
@@ -40,6 +55,11 @@ public class ConsoleInterface implements CommandLineRunner {
         }
     }
 
+    /**
+     * Processes the user input command and delegates to the appropriate handler method.
+     *
+     * @param input the user input command
+     */
     void processCommand(String input) {
         String commandType = getCommandType(input);
         switch (commandType) {
@@ -63,6 +83,12 @@ public class ConsoleInterface implements CommandLineRunner {
         }
     }
 
+    /**
+     * Determines the type of command based on the user input.
+     *
+     * @param input the user input command
+     * @return the command type
+     */
     String getCommandType(String input) {
         switch (input.split(" ")[0].toLowerCase()) {
             case "who":
@@ -90,6 +116,11 @@ public class ConsoleInterface implements CommandLineRunner {
         return "unknown";
     }
 
+    /**
+     * Handles the 'Who is head of department' command.
+     *
+     * @param input the user input command
+     */
     void handleHeadOfDepartment(String input) {
         String departmentName = extractDepartmentName(input);
         System.out.println("Extracted department name: " + departmentName);
@@ -101,6 +132,11 @@ public class ConsoleInterface implements CommandLineRunner {
         );
     }
 
+    /**
+     * Handles the 'Show statistics' command.
+     *
+     * @param input the user input command
+     */
     void handleStatistics(String input) {
         String departmentName = extractDepartmentName(input);
         int assistants = this.departmentService.fetchAssistantsCount(departmentName);
@@ -114,6 +150,11 @@ public class ConsoleInterface implements CommandLineRunner {
         );
     }
 
+    /**
+     * Handles the 'Show the average salary for the department' command.
+     *
+     * @param input the user input command
+     */
     void handleAverageSalary(String input) {
         String departmentName = extractDepartmentName(input);
         double averageSalary = this.departmentService.fetchAverageSalary(departmentName)
@@ -125,6 +166,11 @@ public class ConsoleInterface implements CommandLineRunner {
         );
     }
 
+    /**
+     * Handles the 'Show count of employee for' command.
+     *
+     * @param input the user input command
+     */
     void handleEmployeeCount(String input) {
         String departmentName = extractDepartmentName(input);
         int employeeCount = this.departmentService.fetchEmployeeCount(departmentName);
@@ -134,6 +180,11 @@ public class ConsoleInterface implements CommandLineRunner {
         );
     }
 
+    /**
+     * Handles the 'Global search by' command.
+     *
+     * @param input the user input command
+     */
     void handleGlobalSearch(String input) {
         String template = input.replace(
                 "Global search by",
@@ -146,6 +197,12 @@ public class ConsoleInterface implements CommandLineRunner {
         System.out.println(result);
     }
 
+    /**
+     * Extracts the department name from the user input command.
+     *
+     * @param input the user input command
+     * @return the extracted department name
+     */
     String extractDepartmentName(String input) {
         return input.replaceAll(
                 "(?i)(Who is head of department|Show the average salary for the department|Show count of employee for|Show|statistics\\.)",
