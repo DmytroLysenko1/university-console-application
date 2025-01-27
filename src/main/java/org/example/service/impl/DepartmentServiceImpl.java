@@ -37,7 +37,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public Optional<DepartmentRequestDTO> findByName(String departmentName) {
-        return this.departmentRepository.findByName(departmentName).map( department ->
+        return this.departmentRepository.findByDepartmentName(departmentName).map(department ->
                 this.modelMapper.map(department, DepartmentRequestDTO.class)
         );
     }
@@ -110,8 +110,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     )
     public String fetchHeadOfDepartment(String departmentName) {
         return this.departmentRepository
-                .findByName(departmentName)
-                .map(department -> department.getHeadOfDepartment().getName())
+                .findByDepartmentName(departmentName)
+                .map(Department::getHeadOfDepartment)
+                .map(Lector::getName)
                 .orElseThrow(
                         () -> new NotFoundException("Head of department not found", departmentName)
                 );
@@ -128,7 +129,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     public Integer fetchEmployeeCount(String departmentName) {
-        Department department = this.departmentRepository.findByName(departmentName).orElseThrow(
+        Department department = this.departmentRepository.findByDepartmentName(departmentName).orElseThrow(
                 () -> new NotFoundException("Department not found", departmentName)
         );
         return department.getEmployees().size();
@@ -155,7 +156,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             logException = true
     )
     private List<Lector> fetchLectorsByDegreeAndDepartment(String departmentName, Degree degree) {
-        Department department = this.departmentRepository.findByName(departmentName).orElseThrow(
+        Department department = this.departmentRepository.findByDepartmentName(departmentName).orElseThrow(
                 () -> new NotFoundException("Department not found", departmentName)
         );
         return department

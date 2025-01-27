@@ -1,10 +1,10 @@
 package org.example.service;
 
-import org.example.dto.lector.LectorRequestDTO;
+import org.example.dto.lector.LectorResponseDTO;
 
 import java.util.List;
 
 @FunctionalInterface
 public interface LectorService {
-    List<LectorRequestDTO> searchByNameContaining(String name);
+    List<LectorResponseDTO> searchByNameContaining(String name);
 }

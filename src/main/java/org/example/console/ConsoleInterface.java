@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static java.lang.System.out;
 
 @Component
 @RequiredArgsConstructor
@@ -20,18 +19,18 @@ public class ConsoleInterface implements CommandLineRunner {
 
     @PostConstruct
     public void init() {
-        System.out.println("ConsoleInterface bean initialized with: " + departmentService + ", " + lectorService);
+        System.out.printf("ConsoleInterface bean initialized with: %s, %s%n", departmentService, lectorService);
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         Scanner scanner = new Scanner(System.in);
-        out.println("Welcome to the University console interface!");
+        System.out.println("Welcome to the University console interface!");
         while (true){
-            out.println("Please enter the command:");
+            System.out.println("Please enter the command:");
             String command = scanner.nextLine().trim();
             if (command.equalsIgnoreCase("exit")){
-                out.println("Goodbye!");
+                System.out.println("Goodbye!");
                 break;
             }
             processCommand(command);
@@ -42,35 +41,35 @@ public class ConsoleInterface implements CommandLineRunner {
         if (input.startsWith("Who is head of department")) {
             String departmentName = extractDepartmentName(input);
             String headOfDepartment = this.departmentService.fetchHeadOfDepartment(departmentName);
-            out.printf("Head of %s department is %s%n", departmentName, headOfDepartment);
+            System.out.printf("Head of %s department is %s%n", departmentName, headOfDepartment);
         } else if (input.startsWith("Show") && input.endsWith("statistics.")) {
             String departmentName = extractDepartmentName(input);
             int assistants = this.departmentService.fetchAssistantsCount(departmentName);
             int associateProfessors = this.departmentService.fetchAssociateProfessorsCount(departmentName);
             int professors = this.departmentService.fetchProfessorsCount(departmentName);
-            out.printf("assistants - %d%nassociate professors - %d%nprofessors - %d%n",
+            System.out.printf("assistants - %d%nassociate professors - %d%nprofessors - %d%n",
                     assistants, associateProfessors, professors);
         }else if (input.startsWith("Show the average salary for the department")) {
             String departmentName = extractDepartmentName(input);
             double averageSalary = this.departmentService.fetchAverageSalary(departmentName).doubleValue();
-            out.printf("The average salary of %s is %.2f%n", departmentName, averageSalary);
+            System.out.printf("The average salary of %s is %.2f%n", departmentName, averageSalary);
         } else if (input.startsWith("Show count of employee for")) {
             String departmentName = extractDepartmentName(input);
             int employeeCount = this.departmentService.fetchEmployeeCount(departmentName);
-            out.printf("%d%n", employeeCount);
+            System.out.printf("%d%n", employeeCount);
         } else if (input.startsWith("Global search by")) {
             String template = input.replace("Global search by", "").trim();
             String result = this.lectorService.searchByNameContaining(template)
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.joining(", "));
-            out.println(result);
+            System.out.println(result);
         } else {
-            out.println("Unknown command. Please try again.");
+            System.out.println("Unknown command. Please try again.");
         }
     }
 
     private String extractDepartmentName(String input) {
-        return input.replaceAll("(Who is head of department|Show|Show the average salary for the department|Show count of employee for|statistics.)", "").trim();
+        return input.replaceAll("(?i)(Who is head of department|Show the average salary for the department|Show count of employee for|Show|statistics\\.)", "").trim();
     }
 }

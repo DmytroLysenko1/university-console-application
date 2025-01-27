@@ -1,9 +1,6 @@
 package org.example.entity.abstracts;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.*;
 
 @MappedSuperclass
@@ -12,10 +9,12 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class OrganizationalUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
+    @Column(name = "department_name")
     private String departmentName;
 }

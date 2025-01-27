@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 public interface DepartmentService {
-    Optional<DepartmentRequestDTO> findByName(String name);
+    Optional<DepartmentRequestDTO> findByName(String departmentName);
     BigDecimal fetchAverageSalary(String departmentName);
     Integer fetchAssistantsCount(String departmentName);
     Integer fetchAssociateProfessorsCount(String departmentName);

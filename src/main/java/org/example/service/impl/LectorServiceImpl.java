@@ -2,7 +2,7 @@ package org.example.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.example.annotations.Loggable;
-import org.example.dto.lector.LectorRequestDTO;
+import org.example.dto.lector.LectorResponseDTO;
 import org.example.entity.Lector;
 import org.example.repositrory.LectorRepository;
 import org.example.service.LectorService;
@@ -30,12 +30,12 @@ public class LectorServiceImpl implements LectorService {
             logReturnValue = true,
             logException = true
     )
-    public List<LectorRequestDTO> searchByNameContaining(String name) {
+    public List<LectorResponseDTO> searchByNameContaining(String name) {
         List<Lector> lectors = this.lectorRepository.findByNameContaining(name);
         return lectors
                 .stream()
                 .map(lector ->
-                        this.modelMapper.map(lector, LectorRequestDTO.class))
+                        this.modelMapper.map(lector, LectorResponseDTO.class))
                 .toList();
     }
 }
